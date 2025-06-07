@@ -78,12 +78,17 @@ LIMIT 1;
 
 -- 8. ¿Cuál es el promedio de transacciones de compra y de venta por acción (campo “symbol”)?
 
-SELECT 
-    symbol,
-    ROUND(AVG(CASE WHEN transaction_code = 'buy' THEN 1 ELSE 0 END), 2) AS avg_buy,
-    ROUND(AVG(CASE WHEN transaction_code = 'sell' THEN 1 ELSE 0 END), 2) AS avg_sell
-FROM transactions
-GROUP BY symbol;
+SELECT
+    ROUND(AVG(buy_count), 2) AS promedio_buy,
+    ROUND(AVG(sell_count), 2) AS promedio_sell
+FROM (
+    SELECT
+        symbol,
+        COUNT(CASE WHEN transaction_code = 'buy' THEN 1 END) AS buy_count,
+        COUNT(CASE WHEN transaction_code = 'sell' THEN 1 END) AS sell_count
+    FROM transactions
+    GROUP BY symbol
+)
 
 -- 9. ¿Cuáles son los diferentes beneficios que tienen los clientes del tier “Gold”?
 
@@ -91,7 +96,8 @@ SELECT DISTINCT b.benefit_name
 FROM tier t
 JOIN tier_benefit tb ON t.tier_id = tb.tier_id
 JOIN benefit b ON tb.benefit_name = b.benefit_name
-WHERE t.tier_name = 'Gold' AND t.active = 1;
+WHERE t.tier_name = 'Gold' AND t.active = 1
+ORDER BY b.benefit_name ASC;
 
 -- 10. Obtener la cantidad de clientes por rangos etarios ([10–19], [20–29], etc.), 
 --     que hayan realizado al menos una compra de acciones de “amzn”. La edad debe calcularse 

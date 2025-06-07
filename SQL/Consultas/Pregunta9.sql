@@ -4,4 +4,5 @@ SELECT DISTINCT b.benefit_name
 FROM tier t
 JOIN tier_benefit tb ON t.tier_id = tb.tier_id
 JOIN benefit b ON tb.benefit_name = b.benefit_name
-WHERE t.tier_name = 'Gold' AND t.active = 1;
+WHERE t.tier_name = 'Gold' AND t.active = 1
+ORDER BY b.benefit_name ASC;
